@@ -19,26 +19,34 @@ contract KittyInterface {
 
 contract ZombieFeeding is ZombieFactory {
 
-    KittyInterface kittyContract;
+  KittyInterface kittyContract;
     
-    function setKittyContractAddress(address addr) external {
-      kittyContract = KittyInterface(addr);
-    }
+  function setKittyContractAddress(address addr) external onlyOwner {
+    kittyContract = KittyInterface(addr);
+  }
 
-    function feedAndMultiply(uint _zombieId, uint _targetDna, string memory _species) public {
-        require(msg.sender == zombieToOwner[_zombieId]);
-        Zombie storage myZombie = zombies[_zombieId];
-        uint newDna = ((_targetDna % dnaModulus + myZombie.dna) / 2) % dnaModulus;
-        // kitty species will end with 99
-        if (keccak256(abi.encodePacked(_species)) == keccak256(abi.encodePacked("kitty"))) {
-          newDna = newDna - newDna % 100 + 99;
-        }
-        _createZombie("RandomName", newDna);
-    }
+  function _triggerCooldown(Zombie storage _zombie) internal {
+    _zombie.readyTime = uint32(now + cooldownTime);
+  }
 
-    function feedOnKitty(uint _zombieId, uint _kittyId) public {
-        uint kittyDna;
-        (,,,,,,,,,kittyDna) = kittyContract.getKitty(_kittyId);
-        feedAndMultiply(_zombieId, kittyDna, "kitty");
+  function _isReady(Zombie storage _zombie) internal view returns (bool) {
+    return (_zombie.readyTime <= now);
+  }
+
+  function feedAndMultiply(uint _zombieId, uint _targetDna, string memory _species) public {
+    require(msg.sender == zombieToOwner[_zombieId]);
+    Zombie storage myZombie = zombies[_zombieId];
+    uint newDna = ((_targetDna % dnaModulus + myZombie.dna) / 2) % dnaModulus;
+    // kitty species will end with 99
+    if (keccak256(abi.encodePacked(_species)) == keccak256(abi.encodePacked("kitty"))) {
+      newDna = newDna - newDna % 100 + 99;
     }
+    _createZombie("RandomName", newDna);
+  }
+
+  function feedOnKitty(uint _zombieId, uint _kittyId) public {
+    uint kittyDna;
+    (,,,,,,,,,kittyDna) = kittyContract.getKitty(_kittyId);
+    feedAndMultiply(_zombieId, kittyDna, "kitty");
+  }
 }
