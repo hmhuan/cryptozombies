@@ -1,8 +1,11 @@
 pragma solidity >=0.5.0 <0.6.0;
 
 import "./ownable.sol";
+import "./safemath.sol";
 
 contract ZombieFactory is Ownable {
+
+    using SafeMath for uint256; // preventing overflow and underflow
 
     uint dnaDigits = 16;
     uint dnaModulus = 10 ** dnaDigits;
