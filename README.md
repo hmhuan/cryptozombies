@@ -2,18 +2,14 @@
 
 Very simple about crypto
 
-## Chapter 01
+## Begin Solidity
+https://cryptozombies.io/en/solidity
 
-Zombie Factory
+## Chainlink
 
-## Chapter 03
+## Advanced Solidity
+https://cryptozombies.io/en/solidity_advanced
 
-Advanced Solidity concepts
-
-## Chapter 05
-ERC721 and Crypto-collectibles
-
-https://cryptozombies.io/en/lesson/5
 
 
 Reference: https://cryptozombies.io
